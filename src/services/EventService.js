@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'https://my-json-server.typicode.com/Gerardo-Sonda-G/db-json',
   withCredentials: false,
   headers: {
     Accept: 'application/json',
@@ -11,9 +11,9 @@ const apiClient = axios.create({
 
 export default {
   getEvents() {
-    return apiClient.get('/endpoint0')
+    return apiClient.get('/events')
   },
   getEvent(id) {
-    return apiClient.get('/endpoint4/' + id)
+    return apiClient.get('/events/' + id)
   },
 }
