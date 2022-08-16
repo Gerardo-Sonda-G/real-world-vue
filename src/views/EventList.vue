@@ -45,17 +45,20 @@ export default {
   beforeRouteEnter(routeTo, routeFrom, next) {
     // Getting the events from the EventService and passing the page number to the service.
     next((comp) => {
-      comp.$store.dispatch('fetchEvents', routeTo.query.page || 1)
+      comp.$store.dispatch('fetchEvents', routeTo.query.page || 1).catch(() => {
+        comp.$router.push({
+          name: 'NetworkError',
+        })
+      })
     })
   },
   beforeRouteUpdate(routeTo) {
     // Getting the events from the EventService and passing the page number to the service.
-
-    this.$store.dispatch('fetchEvents', routeTo.query.page || 1)
-
-    if (this.$store.state.events === null) {
-      return { name: 'NetworkError' }
-    }
+    this.$store.dispatch('fetchEvents', routeTo.query.page || 1).catch(() => {
+      this.$router.push({
+        name: 'NetworkError',
+      })
+    })
   },
   computed: {
     hasNextPage() {
@@ -68,16 +71,6 @@ export default {
     totalEvents() {
       return this.$store.state.totalCount
     },
-  },
-  updated() {
-    if (this.$store.state.events === null) {
-      this.$router.push('network-error')
-    }
-  },
-  created() {
-    if (this.$store.state.events === null) {
-      this.$router.push('network-error')
-    }
   },
 }
 </script>

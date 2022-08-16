@@ -10,13 +10,13 @@ export default {
   methods: {
     // Setting the flash message to the event title and then clearing it after 3 seconds.
     register() {
-      this.$store.commit(
-        'SET_EVENT',
+      this.$store.dispatch(
+        'newFlashMessage',
         'You are successfully registered for ' + this.event.title
       )
 
       setTimeout(() => {
-        this.$store.commit('SET_EVENT', '')
+        this.$store.dispatch('newFlashMessage', '')
       }, 3000)
 
       // Pushing the user to the DetailsEvent page.

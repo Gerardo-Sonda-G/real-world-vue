@@ -13,13 +13,10 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      flashMessage: '',
-    }
-  },
-  created() {
-    this.flashMessage = this.$store.event
+  computed: {
+    flashMessage() {
+      return this.$store.state.flashMessage
+    },
   },
 }
 </script>

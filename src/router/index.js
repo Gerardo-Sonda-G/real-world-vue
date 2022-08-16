@@ -7,7 +7,6 @@ import LayoutEvent from '@/views/event/LayoutEvent.vue'
 import NotFound from '@/views/NotFound.vue'
 import NetworkError from '@/views/NetworkError.vue'
 import NProgress from 'nprogress'
-import EventService from '@/services/EventService.js'
 import CreateEvent from '@/views/CreateEvent.vue'
 import store from '@/store/index.js'
 
@@ -39,25 +38,28 @@ const routes = [
     component: LayoutEvent,
     /* This is a hook that is called before the router enters the route. */
     beforeEnter: (to) => {
-      return EventService.getEvent(to.params.id)
-        .then((response) => {
-          /* Setting the event property of the GStore object to the response data. */
-          store.commit('SET_EVENT', response.data)
-        })
-        .catch((error) => {
-          if (error.response && error.response.status == 404) {
-            /* Returning a route object that will be used to navigate to the NetworkError route. */
-            return {
-              name: '404Resource',
-              params: {
-                resource: 'event',
-              },
+      /* Returning a promise. */
+      return (
+        store
+          /* Dispatching an action to the store. */
+          .dispatch('fetchEvent', to.params.id)
+          .then(() => {})
+          /* Catching an error from vuex. */
+          .catch((error) => {
+            if (error.response && error.response.status == 404) {
+              /* Returning a route object that will be used to navigate to the NetworkError route. */
+              return {
+                name: '404Resource',
+                params: {
+                  resource: 'event',
+                },
+              }
+            } else {
+              /* Returning a route object that will be used to navigate to the NetworkError route. */
+              return { name: 'NetworkError' }
             }
-          } else {
-            /* Returning a route object that will be used to navigate to the NetworkError route. */
-            return { name: 'NetworkError' }
-          }
-        }) // ...
+          })
+      )
     },
     /* This is a nested route. */
     children: [
@@ -106,6 +108,7 @@ const routes = [
 ]
 
 const router = createRouter({
+  /* Creating a history object that is used by the router. */
   history: createWebHistory(process.env.BASE_URL),
   routes,
   /* A hook that is called when the router is navigating to a new page. */
@@ -125,10 +128,15 @@ router.beforeEach((to, from) => {
 view the page. */
   const notAuthrized = true
   if (to.meta.requireAuth && notAuthrized) {
-    store.state.flashMessage = 'Sorr, you are notauthorized to view this page'
+    /* Dispatching an action to the store. */
+    store.dispatch(
+      'newFlashMessage',
+      'Sorry, you are notauthorized to view this page'
+    )
 
+    /* Clearing the flash message after 3 seconds. */
     setTimeout(() => {
-      store.state.flashMessage = ''
+      store.dispatch('newFlashMessage', '')
     }, 3000)
 
     if (from.href) {
