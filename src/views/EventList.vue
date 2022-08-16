@@ -3,31 +3,81 @@
     <h1>Events For Good</h1>
     <CardEvent v-for="event in events" :key="event.id" :event="event">
     </CardEvent>
+    <div class="pagination">
+      <router-link
+        id="page-prev"
+        :to="{ name: 'EventList', query: { page: page - 1 } }"
+        rel="prev"
+        v-if="page != 1"
+        >&#60; Previous
+      </router-link>
+      <router-link
+        id="page-index"
+        v-for="n in Math.ceil(this.totalEvents / 2)"
+        :key="n"
+        :to="{ name: 'EventList', query: { page: n } }"
+        rel="prev"
+      >
+        {{ n }}
+      </router-link>
+      <router-link
+        id="next-page"
+        :to="{ name: 'EventList', query: { page: page + 1 } }"
+        rel="next"
+        v-if="hasNextPage"
+      >
+        Next &#62;
+      </router-link>
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import CardEvent from '@/components/CardEvent.vue'
-import EventService from '@/services/EventService.js'
 export default {
   name: 'EventList',
+  props: ['page'],
   components: {
     CardEvent,
   },
-  data() {
-    return {
-      events: null,
+  // A hook that is called before the route is entered.
+  beforeRouteEnter(routeTo, routeFrom, next) {
+    // Getting the events from the EventService and passing the page number to the service.
+    next((comp) => {
+      comp.$store.dispatch('fetchEvents', routeTo.query.page || 1)
+    })
+  },
+  beforeRouteUpdate(routeTo) {
+    // Getting the events from the EventService and passing the page number to the service.
+
+    this.$store.dispatch('fetchEvents', routeTo.query.page || 1)
+
+    if (this.$store.state.events === null) {
+      return { name: 'NetworkError' }
+    }
+  },
+  computed: {
+    hasNextPage() {
+      var totalPages = Math.ceil(this.totalEvents / 2)
+      return this.page < totalPages
+    },
+    events() {
+      return this.$store.state.events
+    },
+    totalEvents() {
+      return this.$store.state.totalCount
+    },
+  },
+  updated() {
+    if (this.$store.state.events === null) {
+      this.$router.push('network-error')
     }
   },
   created() {
-    EventService.getEvents()
-      .then((response) => {
-        this.events = response.data
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    if (this.$store.state.events === null) {
+      this.$router.push('network-error')
+    }
   },
 }
 </script>
@@ -37,5 +87,24 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.pagination {
+  display: flex;
+  width: 290px;
+}
+.pagination a {
+  flex: 2;
+  text-decoration: none;
+  color: #2c3e50;
+}
+#page-prev {
+  text-align: left;
+  flex: 3;
+}
+#page-next {
+  text-align: right;
+}
+#page-index a {
+  text-align: center;
 }
 </style>
