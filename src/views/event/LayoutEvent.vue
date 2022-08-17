@@ -12,11 +12,12 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   computed: {
-    event() {
-      return this.$store.state.event
-    },
+    ...mapState({
+      event: (state) => state.events.event,
+    }),
   },
 }
 </script>

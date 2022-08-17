@@ -42,7 +42,7 @@ const routes = [
       return (
         store
           /* Dispatching an action to the store. */
-          .dispatch('fetchEvent', to.params.id)
+          .dispatch('events/fetchEvent', to.params.id)
           .then(() => {})
           /* Catching an error from vuex. */
           .catch((error) => {

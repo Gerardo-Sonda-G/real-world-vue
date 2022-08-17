@@ -85,6 +85,26 @@
       "date": "12/11/2022",
       "time": "16:00",
       "organizer": "Adam jahr"
+    },
+    {
+      "id": "7d737402-c95b-4f66-b162-a5becc9a22cf",
+      "category": "nature",
+      "title": "Dummy event",
+      "description": "Dummy event",
+      "location": "yucatan",
+      "date": "17/08/2022",
+      "time": "16:00",
+      "organizer": "Adam jahr"
+    },
+    {
+      "id": "6cd1b789-7688-42fd-b03c-0ffe19d640fc",
+      "category": "animal welfare",
+      "title": "Dummy event 2",
+      "description": "Dummy event 2",
+      "location": "Yucatan",
+      "date": "19/08/2022",
+      "time": "19:00",
+      "organizer": "Adam jahr"
     }
   ]
 }

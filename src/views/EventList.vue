@@ -13,7 +13,7 @@
       </router-link>
       <router-link
         id="page-index"
-        v-for="n in Math.ceil(this.totalEvents / 2)"
+        v-for="n in totalPages"
         :key="n"
         :to="{ name: 'EventList', query: { page: n } }"
         rel="prev"
@@ -35,6 +35,8 @@
 <script>
 // @ is an alias to /src
 import CardEvent from '@/components/CardEvent.vue'
+import { mapState, mapGetters } from 'vuex'
+
 export default {
   name: 'EventList',
   props: ['page'],
@@ -45,32 +47,34 @@ export default {
   beforeRouteEnter(routeTo, routeFrom, next) {
     // Getting the events from the EventService and passing the page number to the service.
     next((comp) => {
-      comp.$store.dispatch('fetchEvents', routeTo.query.page || 1).catch(() => {
-        comp.$router.push({
-          name: 'NetworkError',
+      comp.$store
+        .dispatch('events/fetchEvents', routeTo.query.page || 1)
+        .catch(() => {
+          comp.$router.push({
+            name: 'NetworkError',
+          })
         })
-      })
     })
   },
   beforeRouteUpdate(routeTo) {
     // Getting the events from the EventService and passing the page number to the service.
-    this.$store.dispatch('fetchEvents', routeTo.query.page || 1).catch(() => {
-      this.$router.push({
-        name: 'NetworkError',
+    this.$store
+      .dispatch('events/fetchEvents', routeTo.query.page || 1)
+      .catch(() => {
+        this.$router.push({
+          name: 'NetworkError',
+        })
       })
-    })
   },
   computed: {
     hasNextPage() {
-      var totalPages = Math.ceil(this.totalEvents / 2)
+      var totalPages = this.totalPages
       return this.page < totalPages
     },
-    events() {
-      return this.$store.state.events
-    },
-    totalEvents() {
-      return this.$store.state.totalCount
-    },
+    ...mapState({
+      events: (state) => state.events.events,
+    }),
+    ...mapGetters('events', ['totalPages']),
   },
 }
 </script>

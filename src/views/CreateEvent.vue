@@ -75,9 +75,34 @@ export default {
       const event = {
         ...this.event,
         id: uuidv4(),
-        organizer: this.$store.state.user,
+        organizer: this.$store.state.user.user,
       }
-      this.$store.dispatch('createEvent', event)
+      this.$store
+        .dispatch('events/createEvent', event)
+        .then(() => {
+          ;(this.event = {
+            id: '',
+            category: '',
+            title: '',
+            description: '',
+            location: '',
+            date: '',
+            time: '',
+            organizer: '',
+          }),
+            this.$store.dispatch(
+              'newFlashMessage',
+              'You event has created succesuful'
+            )
+          setTimeout(() => {
+            this.$store.dispatch('newFlashMessage', '')
+          }, 3000)
+        })
+        .catch(() =>
+          this.$router.push({
+            name: 'NetworkError',
+          })
+        )
     },
   },
 }
