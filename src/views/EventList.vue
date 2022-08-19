@@ -104,4 +104,7 @@ export default {
 #page-index a {
   text-align: center;
 }
+.border{
+  box-shadow: 1px inset 0px; 
+}
 </style>

@@ -3,6 +3,9 @@
     <div id="flashMessage" v-if="flashMessage">
       {{ flashMessage }}
     </div>
+    <div>
+      <CompositionApi></CompositionApi>
+    </div>
     <nav>
       <router-link :to="{ name: 'EventList' }">Events</router-link> |
       <router-link :to="{ name: 'About' }">About</router-link> |
@@ -13,10 +16,12 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import CompositionApi from './views/CompositionApi.vue'
 export default {
   computed: {
     ...mapState(['flashMessage']),
   },
+  components: { CompositionApi },
 }
 </script>
 
@@ -38,7 +43,7 @@ nav a {
   color: #2c3e50;
 }
 
-nav a.router-link-exact-active {
+ul > li a.router-link-exact-active {
   color: #42b983;
 }
 
